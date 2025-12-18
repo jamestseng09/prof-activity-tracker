@@ -18,7 +18,7 @@ def main():
     gc = gspread.authorize(creds)
 
     sh = gc.open_by_key(os.environ["SHEET_ID"])
-    ws_master = sh.worksheet("RAW_DATA")
+    ws_master = sh.worksheet("PROF_MASTER")
     ws_log = sh.worksheet("MONTHLY_STATUS_LOG")
 
     rows = ws_master.get_all_values()
