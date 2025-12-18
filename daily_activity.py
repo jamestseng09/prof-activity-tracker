@@ -22,13 +22,13 @@ def main():
     gc = gspread.authorize(creds)
 
     sh = gc.open_by_key(os.environ["SHEET_ID"])
-    raw_data = sh.worksheet("RAW_DATA")
+    prof_master = sh.worksheet("PROF_MASTER")
     snapshot_ws = sh.worksheet("SNAPSHOT")
     log_ws = sh.worksheet("DAILY_ACTIVITY_LOG")
 
     today = datetime.date.today().isoformat()
 
-    RAW_DATA = raw_data.get_all_records()
+    profs = prof_master.get_all_records()
     snapshot = {r["prof_id"]: r for r in snapshot_ws.get_all_records()}
 
     log_rows = []
