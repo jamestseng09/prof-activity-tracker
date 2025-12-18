@@ -35,7 +35,7 @@ def main():
     DEPT = idx("Department / Centre")
     NAME = idx("Professor Name")
     CAT = idx("Research Category Code")
-    MACH = idx("Machines:")
+    MACH = idx("Machines")
     STATUS = idx("activity_status")
     LASTPUB = idx("last_pub_date")
     SOURCE = idx("Google Scholar/Research Gate URL")
