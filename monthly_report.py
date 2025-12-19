@@ -49,7 +49,7 @@ def main():
     
     # ---- Aggregate by country (you can later split by MY/SG if needed) ----
     by_country = defaultdict(list)
-    for p in profs:
+for p in profs:
     country = (p.get("Country") or "").strip()
 
     # Skip header rows, empty rows, or unexpected values
