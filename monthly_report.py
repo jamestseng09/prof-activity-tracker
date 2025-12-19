@@ -45,12 +45,22 @@ def main():
 
     profs = prof_ws.get_all_records()
 
+    VALID_COUNTRIES = {"Singapore", "Malaysia"}
+    
     # ---- Aggregate by country (you can later split by MY/SG if needed) ----
     by_country = defaultdict(list)
     for p in profs:
-        country = (p.get("Country") or "").strip()
-        if country:
-            by_country[country].append(p)
+    country = (p.get("Country") or "").strip()
+
+    # Skip header rows, empty rows, or unexpected values
+    if not country or country == "Country":
+        continue
+
+    # Optional but recommended: strict allow-list
+    if country not in VALID_COUNTRIES:
+        continue
+
+    by_country[country].append(p)
 
     # ---- For each country, compute metrics & write rows ----
     snapshot_rows = []
