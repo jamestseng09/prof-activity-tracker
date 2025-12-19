@@ -1,0 +1,29 @@
+name: inst-monthly-snapshot
+
+on:
+  schedule:
+    # Runs on the 1st day of every month at 01:15 UTC (09:15 Taiwan time)
+    - cron: "15 1 1 * *"
+  workflow_dispatch:
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run institution monthly snapshot
+        env:
+          GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.GOOGLE_SERVICE_ACCOUNT_JSON }}
+          SHEET_ID: ${{ secrets.SHEET_ID }}
+        run: |
+          python inst_monthly_snapshot.py
