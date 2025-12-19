@@ -12,7 +12,7 @@ EXEC_SUMMARY_SHEET = "EXEC_SUMMARY"
 STATUSES = ["HIGHLY ACTIVE", "ACTIVE", "STABLE", "DORMANT", "STAGNANT"]
 
 def now_utc_iso():
-    return datetime.datetime.utcnow().replace(microsecond=0).isoformat() + "Z"
+    return datetime.datetime.utcnow().replace(microsecond=0).isoformat()
 
 def month_str_taiwan(today=None):
     # Use today's date (UTC runner), month label is fine (YYYY-MM)
