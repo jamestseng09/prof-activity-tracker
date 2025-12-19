@@ -3,7 +3,7 @@ name: inst-monthly-snapshot
 on:
   schedule:
     # Runs on the 1st day of every month at 01:15 UTC (09:15 Taiwan time)
-    - cron: "15 1 1 * *"
+    - cron: "0 0 1 * *"
   workflow_dispatch:
 
 jobs:
