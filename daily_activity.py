@@ -69,7 +69,7 @@ def main():
 
     sh = gc.open_by_key(os.environ["SHEET_ID"])
     prof_master = sh.worksheet("PROF_MASTER")
-    snapshot_ws = sh.worksheet("SNAPSHOT")
+    snapshot_ws = sh.worksheet("DAILY_SNAPSHOT")
     log_ws = sh.worksheet("DAILY_ACTIVITY_LOG")
 
     today = datetime.date.today().isoformat()
