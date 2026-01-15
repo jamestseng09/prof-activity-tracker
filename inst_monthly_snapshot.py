@@ -2,13 +2,8 @@ import os, json, datetime
 import gspread
 from google.oauth2.service_account import Credentials
 
-def month_end_date(d: datetime.date) -> datetime.date:
-    # month end of the previous month if run on the 1st
-    first = d.replace(day=1)
-    prev_month_last = first - datetime.timedelta(days=1)
-    return prev_month_last
-
 def main():
+    # --- Auth ---
     creds_info = json.loads(os.environ["GOOGLE_SERVICE_ACCOUNT_JSON"])
     scopes = [
         "https://www.googleapis.com/auth/spreadsheets",
@@ -18,60 +13,57 @@ def main():
     gc = gspread.authorize(creds)
 
     sh = gc.open_by_key(os.environ["SHEET_ID"])
-    ws_master = sh.worksheet("PROF_MASTER")
-    ws_log = sh.worksheet("MONTHLY_STATUS_LOG")
+
+    ws_master = sh.worksheet("INST_MASTER")
+    ws_snapshot = sh.worksheet("INST_DAILY_SNAPSHOT")
 
     rows = ws_master.get_all_values()
     header = rows[0]
     data = rows[1:]
 
-    # Required columns in PROF_MASTER (by header name)
-    def idx(col): return header.index(col)
+    def idx(col):
+        return header.index(col)
 
-    # Adjust these header names if your sheet uses slightly different names
-    PROF_ID = idx("prof_id")
-    COUNTRY = idx("Country")
-    UNIV = idx("University")
-    DEPT = idx("Department / Centre")
-    NAME = idx("Professor Name")
-    CAT = idx("Research Category Code")
-    MACH = idx("Machines")
-    STATUS = idx("activity_status")
-    LASTPUB = idx("last_pub_date")
-    SOURCE = idx("Google Scholar/Research Gate URL")
+    # --- Column mapping from INST_MASTER ---
+    SCIENTIST_ID = idx("scientist_id")
+    TOTAL_WORKS = idx("total_works")
+    TOTAL_CITATIONS = idx("total_citations")
+    LAST_PUB_DATE = idx("last_pub_date")
 
-    run_day = datetime.date.today()
-    m_end = month_end_date(run_day).isoformat()
+    today = datetime.date.today().isoformat()
 
     out = []
+
     for r in data:
-        prof_id = r[PROF_ID].strip() if len(r) > PROF_ID else ""
-        if not prof_id:
+        if len(r) <= SCIENTIST_ID:
             continue
+
+        scientist_id = r[SCIENTIST_ID].strip()
+        if not scientist_id:
+            continue
+
         out.append([
-            m_end,
-            r[PROF_ID],
-            r[COUNTRY],
-            r[UNIV],
-            r[DEPT],
-            r[NAME],
-            r[CAT],
-            r[MACH],
-            r[STATUS],
-            r[LASTPUB],
-            r[SOURCE],
+            scientist_id,
+            today,                                 # last_check
+            r[TOTAL_WORKS] if len(r) > TOTAL_WORKS else "",
+            r[TOTAL_CITATIONS] if len(r) > TOTAL_CITATIONS else "",
+            r[LAST_PUB_DATE] if len(r) > LAST_PUB_DATE else "",
         ])
 
-    # If sheet is empty, write header first
-    existing = ws_log.get_all_values()
+    # --- Write header if empty ---
+    existing = ws_snapshot.get_all_values()
     if len(existing) == 0:
-        ws_log.update(values=[[
-            "month_end","prof_id","country","university","department","professor_name",
-            "research_category_code","machines","activity_status","last_pub_date","source"
+        ws_snapshot.update(values=[[
+            "scientist_id",
+            "last_check",
+            "total_works",
+            "total_citations",
+            "last_pub_date",
         ]])
 
-    # Append snapshot rows
-    ws_log.append_rows(out, value_input_option="USER_ENTERED")
+    # --- Append snapshot ---
+    if out:
+        ws_snapshot.append_rows(out, value_input_option="USER_ENTERED")
 
 if __name__ == "__main__":
     main()
