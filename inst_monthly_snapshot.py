@@ -14,8 +14,8 @@ def main():
 
     sh = gc.open_by_key(os.environ["SHEET_ID"])
 
-    ws_master = sh.worksheet("INST_MASTER")
-    ws_snapshot = sh.worksheet("INST_DAILY_SNAPSHOT")
+    ws_master = sh.worksheet("0PROF_MASTER")
+    ws_snapshot = sh.worksheet("DAILY_SNAPSHOT")
 
     rows = ws_master.get_all_values()
     header = rows[0]
