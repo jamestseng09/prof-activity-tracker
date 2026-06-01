@@ -25,7 +25,7 @@ def main():
         return header.index(col)
 
     # --- Column mapping from INST_MASTER ---
-    SCIENTIST_ID = idx("scientist_id")
+    SCIENTIST_ID = idx("prof_id")
     TOTAL_WORKS = idx("total_works")
     TOTAL_CITATIONS = idx("total_citations")
     LAST_PUB_DATE = idx("last_pub_date")
